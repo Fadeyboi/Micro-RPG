@@ -10,6 +10,8 @@ public class Enemy : MonoBehaviour
 
     [Header("Target")]
     public float chaseRange;
+    public float attackRate;
+    private float lastAttackTime;
     public float attackRange;
     private Player player;
 
@@ -55,7 +57,12 @@ public class Enemy : MonoBehaviour
 
     void Hit()
     {
-        player.TakeDamage(damage);
+        if (Time.time - lastAttackTime >= attackRate)
+        {
+            player.TakeDamage(damage);
+            lastAttackTime = Time.time;
+        }
+
     }
 
     void Chase()

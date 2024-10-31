@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -45,7 +46,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         Move();
-
+        updateSpriteDirection();
 
         if (Input.GetMouseButtonDown(0) && Time.time - lastAttackTime >= attackRate)
         {
@@ -59,7 +60,6 @@ public class Player : MonoBehaviour
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mouseDirection = (mousePos - transform.position).normalized;
 
-        Debug.Log(mousePos);
         RaycastHit2D hit = Physics2D.Raycast(transform.position, mouseDirection, attackRange, 1 << 6);
         if (hit.collider != null)
         {
@@ -83,27 +83,28 @@ public class Player : MonoBehaviour
         float yMovement = Input.GetAxis("Vertical");
         rb2.linearVelocity = new Vector2(xMovement, yMovement);
         rb2.linearVelocity = rb2.linearVelocity.normalized * moveSpeed;
-        updateSpriteDirection(xMovement, yMovement);
     }
 
     // Change the position of the spirte depending on the direction you're facing
-    void updateSpriteDirection(float xMovement, float yMovement)
+    void updateSpriteDirection()
     {
-        if (xMovement > 0)
-        {
-            sr.sprite = rightSprite;
-        }
-        else if (xMovement < 0)
+        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        float lookAngle = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x) * Mathf.Rad2Deg;
+        if (lookAngle >= 135 || lookAngle <= -135)
         {
             sr.sprite = leftSprite;
         }
-        else if (yMovement > 0)
+        else if (lookAngle >= 45)
         {
             sr.sprite = upSprite;
         }
-        else if (yMovement < 0)
+        else if (lookAngle <= -45)
         {
             sr.sprite = downSprite;
+        }
+        else if (lookAngle <= 45 || lookAngle >= -45)
+        {
+            sr.sprite = rightSprite;
         }
     }
 

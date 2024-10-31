@@ -178,7 +178,8 @@ MonoBehaviour:
   moveSpeed: 2.5
   maxHP: 100
   currentHP: 0
-  damage: 5
+  damage: 10
   chaseRange: 5
+  attackRate: 1
   attackRange: 1
   spawnPoint: {fileID: 2964865928395402291, guid: 5d94b64ca24ecb94386c15aa162e2d7d, type: 3}
