@@ -5,6 +5,14 @@ public class Player : MonoBehaviour
 {
     [Header("Stats")]
     public float moveSpeed = 5f;
+    public int maxHP = 100;
+    public int currentHP;
+    public int damage;
+
+    [Header("Combat")]
+    public float attackRange;
+    public float attackRate;
+    private float lastAttackTime;
 
     [Header("Sprites")]
     public Sprite downSprite;
@@ -15,6 +23,8 @@ public class Player : MonoBehaviour
     // Components
     private Rigidbody2D rb2;
     private SpriteRenderer sr;
+    private Camera mainCam;
+    private Vector3 mousePos;
 
     // Others
     private Vector2 facingDirection;
@@ -24,11 +34,46 @@ public class Player : MonoBehaviour
         // Get the components
         rb2 = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+        currentHP = maxHP;
+    }
+
+    void Start()
+    {
+        mainCam = Camera.main;
     }
 
     void Update()
     {
         Move();
+
+
+        if (Input.GetMouseButtonDown(0) && Time.time - lastAttackTime >= attackRate)
+        {
+            Attack();
+        }
+    }
+
+    void Attack()
+    {
+        lastAttackTime = Time.time;
+        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mouseDirection = (mousePos - transform.position).normalized;
+
+        Debug.Log(mousePos);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, mouseDirection, attackRange, 1 << 6);
+        if (hit.collider != null)
+        {
+            Enemy enemy = hit.collider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+                Debug.Log("Enemy hit!");
+            }
+            else
+            {
+                Debug.LogWarning("Hit object does not have an Enemy component.");
+            }
+        }
     }
 
     void Move()
@@ -60,5 +105,19 @@ public class Player : MonoBehaviour
         {
             sr.sprite = downSprite;
         }
+    }
+
+    public void TakeDamage(int damageTaken)
+    {
+        currentHP -= damageTaken;
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        gameObject.SetActive(false);
     }
 }
