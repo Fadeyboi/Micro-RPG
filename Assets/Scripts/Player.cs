@@ -120,5 +120,6 @@ public class Player : MonoBehaviour
     void Die()
     {
         gameObject.SetActive(false);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
     }
 }
