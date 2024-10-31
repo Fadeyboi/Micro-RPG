@@ -26,6 +26,9 @@ public class Player : MonoBehaviour
     private SpriteRenderer sr;
     private Camera mainCam;
     private Vector3 mousePos;
+    private ParticleSystem[] particles;
+    private ParticleSystem attackEnemyParticle;
+    private ParticleSystem playerDamagedParticle;
 
     // Others
     private Vector2 facingDirection;
@@ -36,6 +39,9 @@ public class Player : MonoBehaviour
         rb2 = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         currentHP = maxHP;
+        particles = gameObject.GetComponentsInChildren<ParticleSystem>();
+        attackEnemyParticle = particles[0];
+        playerDamagedParticle = particles[1];
     }
 
     void Start()
@@ -67,6 +73,10 @@ public class Player : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
+                // Play particle hit effect
+                attackEnemyParticle.transform.position = hit.collider.transform.position;
+                attackEnemyParticle.Play();
+
                 Debug.Log("Enemy hit!");
             }
             else
@@ -111,6 +121,8 @@ public class Player : MonoBehaviour
     public void TakeDamage(int damageTaken)
     {
         currentHP -= damageTaken;
+        playerDamagedParticle.transform.position = transform.position;
+        playerDamagedParticle.Play();
         if (currentHP <= 0)
         {
             Die();
