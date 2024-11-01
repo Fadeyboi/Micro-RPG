@@ -15,6 +15,12 @@ public class Player : MonoBehaviour
     public float attackRate;
     private float lastAttackTime;
 
+    [Header("Experience")]
+    public int currentLevel;
+    public int currentXp;
+    public int xpToNextLevel;
+    public float xpModifier;
+
     [Header("Sprites")]
     public Sprite downSprite;
     public Sprite upSprite;
@@ -29,6 +35,7 @@ public class Player : MonoBehaviour
     private ParticleSystem[] particles;
     private ParticleSystem attackEnemyParticle;
     private ParticleSystem playerDamagedParticle;
+    private PlayerUI ui;
 
     // Others
     private Vector2 facingDirection;
@@ -38,6 +45,7 @@ public class Player : MonoBehaviour
         // Get the components
         rb2 = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+        ui = FindAnyObjectByType<PlayerUI>();
         currentHP = maxHP;
         particles = gameObject.GetComponentsInChildren<ParticleSystem>();
         attackEnemyParticle = particles[0];
@@ -47,6 +55,9 @@ public class Player : MonoBehaviour
     void Start()
     {
         mainCam = Camera.main;
+        ui.UpdateHealthbar();
+        ui.UpdateXpbar();
+        ui.UpdateLevelText();
     }
 
     void Update()
@@ -121,6 +132,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(int damageTaken)
     {
         currentHP -= damageTaken;
+        ui.UpdateHealthbar();
         playerDamagedParticle.transform.position = transform.position;
         playerDamagedParticle.Play();
         if (currentHP <= 0)
@@ -133,5 +145,29 @@ public class Player : MonoBehaviour
     {
         gameObject.SetActive(false);
         UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
+    }
+
+    public void addXp(int xp)
+    {
+        currentXp += xp;
+        if (currentXp >= xpToNextLevel)
+        {
+            levelUp();
+        }
+        else
+        {
+            ui.UpdateXpbar();
+        }
+    }
+
+    void levelUp()
+    {
+        currentXp -= xpToNextLevel;
+        currentLevel++;
+        ui.UpdateXpbar();
+
+        xpToNextLevel = Mathf.RoundToInt((float)xpToNextLevel * xpModifier);
+
+        ui.UpdateLevelText();
     }
 }

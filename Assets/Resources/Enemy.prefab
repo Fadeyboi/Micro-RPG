@@ -179,6 +179,7 @@ MonoBehaviour:
   maxHP: 100
   currentHP: 0
   damage: 10
+  xpToGive: 20
   chaseRange: 5
   attackRate: 1
   attackRange: 1

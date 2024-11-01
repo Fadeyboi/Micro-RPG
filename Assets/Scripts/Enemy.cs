@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
     public int maxHP = 100;
     public int currentHP;
     public int damage;
+    public int xpToGive;
 
     [Header("Target")]
     public float chaseRange;
@@ -82,6 +83,7 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        player.addXp(xpToGive);
         gameObject.SetActive(false);
         Invoke("Respawn", 2f);
     }
