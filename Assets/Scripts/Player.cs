@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public int maxHP = 100;
     public int currentHP;
     public int damage;
+    public float interactRange;
 
     [Header("Combat")]
     public float attackRange;
@@ -63,11 +64,33 @@ public class Player : MonoBehaviour
     void Update()
     {
         Move();
-        updateSpriteDirection();
+        UpdateSpriteDirection();
 
         if (Input.GetMouseButtonDown(0) && Time.time - lastAttackTime >= attackRate)
         {
             Attack();
+        }
+        CheckInteract();
+    }
+
+    void CheckInteract()
+    {
+        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mouseDirection = (mousePos - transform.position).normalized;
+        RaycastHit2D interact = Physics2D.Raycast(transform.position, mouseDirection, interactRange, 1 << 7);
+        if (interact.collider != null)
+        {
+            Interactable interactable = interact.collider.GetComponent<Interactable>();
+            ui.SetInteractText(interact.collider.transform.position, interactable.interactDesc);
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                interactable.Interact();
+            }
+        }
+        else
+        {
+            ui.DisableInteractText();
         }
     }
 
@@ -107,7 +130,7 @@ public class Player : MonoBehaviour
     }
 
     // Change the position of the spirte depending on the direction you're facing
-    void updateSpriteDirection()
+    void UpdateSpriteDirection()
     {
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         float lookAngle = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x) * Mathf.Rad2Deg;
@@ -147,12 +170,12 @@ public class Player : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
     }
 
-    public void addXp(int xp)
+    public void AddXp(int xp)
     {
         currentXp += xp;
         if (currentXp >= xpToNextLevel)
         {
-            levelUp();
+            LevelUp();
         }
         else
         {
@@ -160,7 +183,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void levelUp()
+    void LevelUp()
     {
         currentXp -= xpToNextLevel;
         currentLevel++;

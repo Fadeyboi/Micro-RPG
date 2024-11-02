@@ -83,7 +83,7 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
-        player.addXp(xpToGive);
+        player.AddXp(xpToGive);
         gameObject.SetActive(false);
         Invoke("Respawn", 2f);
     }
