@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -19,7 +21,8 @@ public class Enemy : MonoBehaviour
     // Components
     private Rigidbody2D rb2;
     public Transform spawnPoint;
-    private Object enemyRef;
+    private UnityEngine.Object enemyRef;
+    private UnityEngine.Object item;
 
 
     void Awake()
@@ -85,7 +88,21 @@ public class Enemy : MonoBehaviour
     {
         player.AddXp(xpToGive);
         gameObject.SetActive(false);
+        SpawnItem();
         Invoke("Respawn", 2f);
+    }
+
+    void SpawnItem()
+    {
+        item = Resources.Load("Item");
+        List<Vector3> randomDropPosition = new List<Vector3>
+        {
+            Vector3.up,
+            Vector3.down,
+            Vector3.left,
+            Vector3.right
+        };
+        Instantiate(item, transform.position + randomDropPosition[UnityEngine.Random.Range(0, 4)], transform.rotation);
     }
 
     public void Respawn()
@@ -101,5 +118,7 @@ public class Enemy : MonoBehaviour
         }
         Destroy(gameObject);
     }
+
+
 
 }

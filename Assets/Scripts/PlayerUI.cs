@@ -33,6 +33,15 @@ public class PlayerUI : MonoBehaviour
         xpbarFill.fillAmount = (float)player.currentXp / (float)player.xpToNextLevel;
     }
 
+    public void UpdateInventoryText()
+    {
+        inventoryText.text = "";
+        foreach (string item in player.inventory)
+        {
+            inventoryText.text += item + "\n";
+        }
+    }
+
     public void SetInteractText(Vector3 pos, string text)
     {
         interactText.gameObject.SetActive(true);

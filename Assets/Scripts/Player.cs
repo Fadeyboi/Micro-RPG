@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -10,6 +11,7 @@ public class Player : MonoBehaviour
     public int currentHP;
     public int damage;
     public float interactRange;
+    public List<string> inventory = new List<string>();
 
     [Header("Combat")]
     public float attackRange;
@@ -192,5 +194,11 @@ public class Player : MonoBehaviour
         xpToNextLevel = Mathf.RoundToInt((float)xpToNextLevel * xpModifier);
 
         ui.UpdateLevelText();
+    }
+
+    public void AddItemToInventory(string item)
+    {
+        inventory.Add(item);
+        ui.UpdateInventoryText();
     }
 }
